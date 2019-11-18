@@ -13,13 +13,16 @@ import java.util.List;
 public class PyBoardView extends KeyboardView {
 
     static final int KEYCODE_OPTIONS = -100;
+    Context context;
 
-    public PyBoardView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public PyBoardView(Context cont, AttributeSet attrs) {
+        super(cont, attrs);
+        context = cont;
     }
 
-    public PyBoardView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    public PyBoardView(Context cont, AttributeSet attrs, int defStyle) {
+        super(cont, attrs, defStyle);
+        context = cont;
     }
 
     /*@Override
@@ -38,10 +41,10 @@ public class PyBoardView extends KeyboardView {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        /*Context context = getContext();
+
         List<Keyboard.Key> keys = getKeyboard().getKeys();
         for (Keyboard.Key key : keys) {
-            if (key.codes[0] == 7) {
+            /*if (key.codes[0] == 7) {
                 Log.e("KEY", "Drawing key with code " + key.codes[0]);
                 Drawable dr = (Drawable) context.getResources().getDrawable(R.drawable.red_tint);
                 dr.setBounds(key.x, key.y, key.x + key.width, key.y + key.height);
@@ -51,7 +54,7 @@ public class PyBoardView extends KeyboardView {
                 Drawable dr = (Drawable) context.getResources().getDrawable(R.drawable.blue_tint);
                 dr.setBounds(key.x, key.y, key.x + key.width, key.y + key.height);
                 dr.draw(canvas);
-            }
-        }*/
+            }*/
+        }
     }
 }
