@@ -6,5 +6,6 @@
     android:layout_height="wrap_content"
     android:keyPreviewLayout="@layout/key_preview"
     android:keyBackground="@drawable/key_background"
+    android:background="@color/colorPrimaryDark"
     android:layout_alignParentBottom="true">
 </android.inputmethodservice.KeyboardView>

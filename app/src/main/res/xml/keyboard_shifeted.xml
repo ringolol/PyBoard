@@ -82,7 +82,7 @@
         <Key android:codes="95" android:keyLabel="_"/>
         <Key android:codes="33" android:keyLabel="!"/>
         <Key android:codes="61" android:keyLabel="="/>
-        <Key android:codes="32" android:keyLabel=" " android:keyWidth="29%p"/>
+        <Key android:codes="32" android:keyLabel=" " android:keyWidth="29.16%p"/>
         <Key android:codes="92" android:keyLabel="\\"/>
         <Key android:codes="62" android:keyLabel="&gt;"/>
         <Key android:codes="37" android:keyLabel="%"/>
