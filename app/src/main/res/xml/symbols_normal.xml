@@ -60,7 +60,8 @@
     <Row>
         <Key android:codes="-101" android:keyLabel="ABC" android:keyEdgeFlags="left" android:keyWidth="12.5%p"/>
         <Key android:codes="-104" android:keyLabel="for i in range(...):" android:keyWidth="37.5%p"/>
-        <Key android:codes="-107" android:keyLabel="try: ... except: finale:" android:keyEdgeFlags="right" android:keyWidth="50%p"/>
+        <Key android:codes="-107" android:keyLabel="Stepik" android:keyWidth="25%p"/>
+        <Key android:codes="-108" android:keyLabel="print(...)" android:keyEdgeFlags="right" android:keyWidth="25%p"/>
     </Row>
 
 </Keyboard>

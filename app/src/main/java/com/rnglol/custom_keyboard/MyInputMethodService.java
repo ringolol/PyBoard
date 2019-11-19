@@ -20,13 +20,14 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
 
     @Override
     public View onCreateInputView() {
-        // get the KeyboardView and add our Keyboard layout to it
         keyboardView = (PyBoardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
+
         keyboard_shifted = new Keyboard(this, R.xml.keyboard_shifeted);
         keyboard_shifted.setShifted(true);
         keyboard_normal = new Keyboard(this, R.xml.keyboard_normal);
         keyboard_normal.setShifted(false);
         keyboard_symbols = new Keyboard(this, R.xml.symbols_normal);
+
         keyboardView.setKeyboard(keyboard_normal);
         keyboardView.setOnKeyboardActionListener(this);
         vibra = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -35,10 +36,10 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
 
     void vibrate(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibra.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+            vibra.vibrate(VibrationEffect.createOneShot(45, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
             //deprecated in API 26
-            vibra.vibrate(35);
+            vibra.vibrate(45);
         }
     }
 
@@ -69,7 +70,6 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     public void onKey(int primaryCode, int[] keyCodes) {
         Log.println(Log.INFO,"INFO", "onKey");
         InputConnection ic = getCurrentInputConnection();
-        vibrate();
         if (ic == null) return;
 
         if(primaryCode == Keyboard.KEYCODE_SHIFT) {
@@ -111,6 +111,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                 keyboardView.setKeyboard(keyboard_normal);
                 return;
             case -102:
+                // smiley face shows where the pointer will be
                 CommitSnippet(ic, " if ☺ else None");
                 return;
             case -103:
@@ -126,7 +127,11 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                 CommitSnippet(ic, "def ☺(*args,**kwargs):");
                 return;
             case -107:
-                CommitSnippet(ic, "try:\n    ☺\nexcept:\n    pass\nfinale:\n    pass");
+                CommitSnippet(ic, "#PY Board easy input\ndef gen_in(n):\n\tfor _ in range(n):\n" +
+                        "\t\tyield int(input())\n\na, b, c = gen_in(3)☺");
+                return;
+            case -108:
+                CommitSnippet(ic, "print(☺)");
                 return;
             case -200:
                 ic.commitText("True", 1);
@@ -172,7 +177,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                 return;
             default:
                 char code = (char) primaryCode;
-                // handle CapsLock
+                // handle CapsLock (Original characters are Capitalized)
                 if(Character.isLetter(code) && !caps)
                     code = Character.toLowerCase(code);
 
@@ -188,7 +193,9 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     }
 
     @Override
-    public void onPress(int primaryCode) { }
+    public void onPress(int primaryCode) {
+        vibrate();
+    }
 
     @Override
     public void onRelease(int primaryCode) { }
