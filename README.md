@@ -12,11 +12,12 @@ PY Board is a custom android keyboard for programming in Python
 * Navigation arrows
 
 ## ToDo ##
-* On long hold key -- access second set of special symbols
-* On long hold key -- shortcuts, for example
+* Add functionality for code snipets in Symbols
+* On hold key -- access second set of special symbols
+* On hold key -- shortcuts, for example
   *  hold 'F' → __False__
   *  hold 'T' → __True__
-* Add code snipets to Sym
+
 
 ## Previous versions ##
 
