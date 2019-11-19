@@ -8,7 +8,7 @@ PyBoard is a custom android keyboard for programming in Python
 
 ## Main features ##
 * Easy access to symbols used in Python
-* Use Caps to access second set of special symbols
+* Use Caps to access second set of special symbols as well as capital letters
 * Navigation arrows
 
 ## ToDo ##
