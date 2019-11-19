@@ -1,12 +1,13 @@
 
-# PyBoard v0.2
+# PyBoard v0.5
 
 PyBoard is a custom android keyboard for programming in Python
 
-<img src="PyBoard_main.jpg" width="300">   <img src="PyBoard_caps.jpg" width="300">
+<img src="readme_res/PyBoard05_Main.jpg" width="300"> <img src="readme_res/PyBoard05_Caps.jpg" width="300">
+<img src="readme_res/PyBoard_Syms.jpg" width="300">
 
 ## Main features ##
-* All key symbols can be accessed from main view
+* Easy access to symbols used in Python
 * Use Caps to access second set of special symbols
 * Navigation arrows
 
@@ -15,13 +16,12 @@ PyBoard is a custom android keyboard for programming in Python
 * On long hold key -- shortcuts, for example
   *  hold 'F' → __False__
   *  hold 'T' → __True__
-* Add panel Sym
-  * Add rarly used symbols to Sym
-  * Add code snipets to Sym
-* Add icons for functional buttons
-* Create custom KeyboardView and Keyboard classes
+* Add code snipets to Sym
 
 ## Previous versions ##
 
 ### PyBoard v0.1 ###
-<img src="PyBoard01.jpg" width="300">
+<img src="readme_res/PyBoard01.jpg" width="300">
+
+### PyBoard v0.2 ###
+<img src="readme_res/PyBoard02_main.jpg" width="300">   <img src="readme_res/PyBoard02_caps.jpg" width="300">
