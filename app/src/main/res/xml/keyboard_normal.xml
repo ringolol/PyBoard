@@ -79,16 +79,15 @@
     </Row>
 
     <Row>
-        <Key android:codes="43" android:keyLabel="+" android:keyEdgeFlags="left"/>
+        <Key android:codes="-100" android:keyLabel="\?&amp;^" android:keyWidth="12.5%p" android:keyEdgeFlags="left"/>
+        <Key android:codes="43" android:keyLabel="+" />
         <Key android:codes="45" android:keyLabel="-"/>
         <Key android:codes="42" android:keyLabel="*"/>
-        <Key android:codes="61" android:keyLabel="="/>
         <Key android:codes="32" android:keyLabel=" " android:keyWidth="29.16%p"/>
+        <Key android:codes="61" android:keyLabel="="/>
         <Key android:codes="47" android:keyLabel="/"/>
         <Key android:codes="60" android:keyLabel="&lt;"/>
-        <Key android:codes="35" android:keyLabel="#"/>
-        <Key android:codes="32" android:keyLabel="Sym" android:keyEdgeFlags="right" android:keyWidth="12.5%p"/>
-
+        <Key android:codes="35" android:keyLabel="#" android:keyEdgeFlags="right" />
     </Row>
 
 </Keyboard>

@@ -14,7 +14,7 @@ import java.util.Timer;
 
 public class MyInputMethodService extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
     private KeyboardView keyboardView;
-    private Keyboard keyboard_shifted, keyboard_normal;
+    private Keyboard keyboard_shifted, keyboard_normal, keyboard_symbols;
     private boolean caps = false;
 
     @Override
@@ -25,6 +25,7 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
         keyboard_shifted.setShifted(true);
         keyboard_normal = new Keyboard(this, R.xml.keyboard_normal);
         keyboard_normal.setShifted(false);
+        keyboard_symbols = new Keyboard(this, R.xml.symbols_normal);
         keyboardView.setKeyboard(keyboard_normal);
         keyboardView.setOnKeyboardActionListener(this);
         return keyboardView;
@@ -67,6 +68,13 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
             case KeyEvent.KEYCODE_DPAD_LEFT:
             case KeyEvent.KEYCODE_DPAD_UP:
                 ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, primaryCode));
+                return;
+            case -100:
+                keyboardView.setKeyboard(keyboard_symbols);
+                return;
+            case -101:
+                keyboardView.setKeyboard(keyboard_normal);
+                caps = false;
                 return;
             default:
                 char code = (char) primaryCode;
