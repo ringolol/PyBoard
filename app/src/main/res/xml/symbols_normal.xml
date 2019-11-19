@@ -41,24 +41,26 @@
         <Key android:codes="63" android:keyLabel="\?" />
         <Key android:codes="36" android:keyLabel="$" android:keyEdgeFlags="right"/>
     </Row>
+
     <Row>
         <Key android:codes="38" android:keyLabel="&amp;" android:keyEdgeFlags="left"/>
         <Key android:codes="126" android:keyLabel="~" />
         <Key android:codes="94" android:keyLabel="^"/>
         <Key android:codes="124" android:keyLabel="|" />
         <Key android:codes="96" android:keyLabel="`"/>
-        <Key android:codes="-102" android:keyLabel="... if x else ..." android:keyWidth="50%p" android:keyEdgeFlags="right"/>
-
+        <Key android:codes="-106" android:keyLabel="def ...(*args,**kwargs):" android:keyWidth="50%p" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>
-        <Key android:codes="-103" android:keyLabel="for x in ..." android:keyEdgeFlags="left" android:keyWidth="38.71%p"/>
-        <Key android:codes="-104" android:keyLabel="for i in range(...)" android:keyEdgeFlags="right" android:keyWidth="61.29%p"/>
+        <Key android:codes="-102" android:keyLabel="if ... else " android:keyWidth="25%p" android:keyEdgeFlags="left"/>
+        <Key android:codes="-103" android:keyLabel="for x in ... :" android:keyWidth="25%p"/>
+        <Key android:codes="-105" android:keyLabel="for i, x in enumerate(...):" android:keyEdgeFlags="right" android:keyWidth="50%p"/>
     </Row>
 
     <Row>
         <Key android:codes="-101" android:keyLabel="ABC" android:keyEdgeFlags="left" android:keyWidth="12.5%p"/>
-        <Key android:codes="-105" android:keyLabel="for i, x in enumerate(...)" android:keyEdgeFlags="right" android:keyWidth="87.5%p"/>
+        <Key android:codes="-104" android:keyLabel="for i in range(...):" android:keyWidth="37.5%p"/>
+        <Key android:codes="-107" android:keyLabel="try: ... except: finale:" android:keyEdgeFlags="right" android:keyWidth="50%p"/>
     </Row>
 
 </Keyboard>

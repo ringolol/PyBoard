@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3a3a3a</color>
-    <color name="colorPrimaryDark">#2B2B2B</color>
+    <color name="colorPrimary">#393941</color>
+    <color name="colorPrimaryDark">#1c1f28</color>
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorKeysFont">#FFFFFF</color>
-    <color name="colorKeysBackground">#3a3a3a</color>
-    <color name="colorKeyPreviewBG">#2B2B2B</color>
+    <color name="colorKeysBackground">#393941</color>
+    <color name="colorKeyPreviewBG">#1c1f28</color>
 
 </resources>

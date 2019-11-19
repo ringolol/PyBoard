@@ -9,52 +9,78 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import java.util.List;
+import java.util.logging.Level;
 
 public class PyBoardView extends KeyboardView {
 
-    static final int KEYCODE_OPTIONS = -100;
-    Context context;
-
     public PyBoardView(Context cont, AttributeSet attrs) {
         super(cont, attrs);
-        context = cont;
     }
 
     public PyBoardView(Context cont, AttributeSet attrs, int defStyle) {
         super(cont, attrs, defStyle);
-        context = cont;
     }
-
-    /*@Override
-    protected boolean onLongPress(Keyboard.Key key) {
-        if (key.codes[0] == Keyboard.KEYCODE_CANCEL) {
-            getOnKeyboardActionListener().onKey(KEYCODE_OPTIONS, null);
-            return true;
-        //} else if (key.codes[0] == 113) {
-            //return true;
-        } else {
-            //Log.d("LatinKeyboardView", "KEY: " + key.codes[0]);
-            return super.onLongPress(key);
-        }
-    }*/
 
     @Override
-    public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    public boolean onLongPress(Keyboard.Key k) {
+        String str = String.format("OnLongPress: Key -- %s == %d", (char)k.codes[0],k.codes[0]);
+        Log.println(Log.INFO,"INFO", str);
 
-        List<Keyboard.Key> keys = getKeyboard().getKeys();
-        for (Keyboard.Key key : keys) {
-            /*if (key.codes[0] == 7) {
-                Log.e("KEY", "Drawing key with code " + key.codes[0]);
-                Drawable dr = (Drawable) context.getResources().getDrawable(R.drawable.red_tint);
-                dr.setBounds(key.x, key.y, key.x + key.width, key.y + key.height);
-                dr.draw(canvas);
-
-            } else {
-                Drawable dr = (Drawable) context.getResources().getDrawable(R.drawable.blue_tint);
-                dr.setBounds(key.x, key.y, key.x + key.width, key.y + key.height);
-                dr.draw(canvas);
-            }*/
+        int primCode = 1;
+        switch (k.codes[0])
+        {
+            case 'T':
+                primCode = -200;
+                break;
+            case 'F':
+                primCode = -201;
+                break;
+            case '(':
+                primCode = -202;
+                break;
+            case '[':
+                primCode = -203;
+                break;
+            case '{':
+                primCode = -204;
+                break;
+            case '<':
+                primCode = -205;
+                break;
+            case ':':
+                primCode = -206;
+                break;
+            case '/':
+                primCode = -207;
+                break;
+            case '=':
+                primCode = -208;
+                break;
+            case '*':
+                primCode = -209;
+                break;
+            case '-':
+                primCode = -210;
+                break;
+            case '+':
+                primCode = -211;
+                break;
+            case '\'':
+                primCode = -212;
+                break;
+            case ',':
+                primCode = -213;
+                break;
         }
+
+        if(primCode != 1)
+        {
+            getOnKeyboardActionListener().onKey(primCode, null);
+            return true;
+        }
+
+        return super.onLongPress(k);
     }
+
+
 }

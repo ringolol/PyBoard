@@ -32,7 +32,7 @@
     </Row>
 
     <Row>
-        <Key android:codes="59" android:keyLabel=";" android:keyEdgeFlags="left"/>
+        <Key android:codes="62" android:keyLabel="&gt;" android:keyEdgeFlags="left"/>
         <Key android:codes="81" android:keyLabel="q"/>
         <Key android:codes="87" android:keyLabel="w"/>
         <Key android:codes="69" android:keyLabel="e"/>
@@ -71,7 +71,7 @@
         <Key android:codes="66" android:keyLabel="b"/>
         <Key android:codes="78" android:keyLabel="n"/>
         <Key android:codes="77" android:keyLabel="m"/>
-        <Key android:codes="44" android:keyLabel=","/>
+        <Key android:codes="59" android:keyLabel=";"/>
         <Key android:codes="-4" android:keyEdgeFlags="right" android:keyWidth="12.5%p"
             android:keyIcon="@drawable/return_icon"
             android:iconPreview="@drawable/return_icon"/>
@@ -83,11 +83,10 @@
         <Key android:codes="95" android:keyLabel="_"/>
         <Key android:codes="33" android:keyLabel="!"/>
         <Key android:codes="32" android:keyLabel=" " android:keyWidth="29.16%p"/>
-        <Key android:codes="61" android:keyLabel="="/>
+        <Key android:codes="35" android:keyLabel="#"/>
         <Key android:codes="92" android:keyLabel="\\"/>
-        <Key android:codes="62" android:keyLabel="&gt;"/>
-        <Key android:codes="37" android:keyLabel="%" android:keyEdgeFlags="right"/>
-
+        <Key android:codes="37" android:keyLabel="%" />
+        <Key android:codes="46" android:keyLabel="." android:keyEdgeFlags="right"/>
     </Row>
 
 </Keyboard>
