@@ -1,5 +1,5 @@
 
-# PY Board v0.5
+# PY Board v0.6
 
 PY Board is a custom android keyboard for programming in Python
 
