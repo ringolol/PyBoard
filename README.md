@@ -21,6 +21,11 @@ PY Board is a custom android keyboard for programming in Python
 
 ## Previous versions ##
 
+### PY Board v0.5 ###
+
+<img src="readme_res/PyBoard05_Main.jpg" width="300"> <img src="readme_res/PyBoard05_Caps.jpg" width="300">
+<img src="readme_res/PyBoard_Syms.jpg" width="300">
+
 ### PY Board v0.2 ###
 <img src="readme_res/PyBoard02_main.jpg" width="300">   <img src="readme_res/PyBoard02_caps.jpg" width="300">
 
