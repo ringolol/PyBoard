@@ -17,38 +17,20 @@
     </Row>
 
     <Row>
-        <Key android:codes="49" android:keyLabel="1" android:keyEdgeFlags="left"/>
-        <Key android:codes="50" android:keyLabel="2"/>
-        <Key android:codes="51" android:keyLabel="3"/>
-        <Key android:codes="52" android:keyLabel="4"/>
-        <Key android:codes="53" android:keyLabel="5"/>
-        <Key android:codes="54" android:keyLabel="6"/>
-        <Key android:codes="55" android:keyLabel="7"/>
-        <Key android:codes="56" android:keyLabel="8"/>
-        <Key android:codes="57" android:keyLabel="9"/>
-        <Key android:codes="48" android:keyLabel="0" android:keyEdgeFlags="right"/>
-    </Row>
-
-    <Row>
-        <Key android:codes="60" android:keyLabel="&lt;" android:keyEdgeFlags="left"/>
-        <Key android:codes="62" android:keyLabel="&gt;"/>
-        <Key android:codes="40" android:keyLabel="("/>
-        <Key android:codes="41" android:keyLabel=")"/>
-        <Key android:codes="91" android:keyLabel="["/>
-        <Key android:codes="93" android:keyLabel="]"/>
-        <Key android:codes="123" android:keyLabel="{"/>
-        <Key android:codes="125" android:keyLabel="}"/>
-        <Key android:codes="63" android:keyLabel="\?" />
-        <Key android:codes="36" android:keyLabel="$" android:keyEdgeFlags="right"/>
-    </Row>
-
-    <Row>
         <Key android:codes="38" android:keyLabel="&amp;" android:keyEdgeFlags="left"/>
         <Key android:codes="126" android:keyLabel="~" />
         <Key android:codes="94" android:keyLabel="^"/>
         <Key android:codes="124" android:keyLabel="|" />
         <Key android:codes="96" android:keyLabel="`"/>
-        <Key android:codes="-106" android:keyLabel="def ...(*args,**kwargs):" android:keyWidth="50%p" android:keyEdgeFlags="right"/>
+        <Key android:codes="63" android:keyLabel="\?"/>
+        <Key android:codes="36" android:keyLabel="$"/>
+    </Row>
+
+    <Row>
+    </Row>
+
+    <Row>
+        <Key android:codes="-106" android:keyLabel="def ...(*args,**kwargs):" android:keyWidth="50%p" android:keyEdgeFlags="left"/>
     </Row>
 
     <Row>

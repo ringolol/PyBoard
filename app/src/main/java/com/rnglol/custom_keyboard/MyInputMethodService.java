@@ -14,7 +14,7 @@ import android.os.Vibrator;
 
 public class MyInputMethodService extends InputMethodService implements PyBoardView.OnKeyboardActionListener {
     private PyBoardView keyboardView;
-    private Keyboard keyboard_shifted, keyboard_normal, keyboard_symbols;
+    private Keyboard keyboard_normal, keyboard_symbols;
     private boolean caps = false;
     Vibrator vibra;
 
@@ -22,8 +22,6 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     public View onCreateInputView() {
         keyboardView = (PyBoardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
 
-        keyboard_shifted = new Keyboard(this, R.xml.keyboard_shifeted);
-        keyboard_shifted.setShifted(true);
         keyboard_normal = new Keyboard(this, R.xml.keyboard_normal);
         keyboard_normal.setShifted(false);
         keyboard_symbols = new Keyboard(this, R.xml.symbols_normal);
@@ -34,7 +32,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         return keyboardView;
     }
 
-    void vibrate(){
+    void vibrate_on_tap(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibra.vibrate(VibrationEffect.createOneShot(45, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
@@ -73,13 +71,8 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         if (ic == null) return;
 
         if(primaryCode == Keyboard.KEYCODE_SHIFT) {
-            if (!caps) {
-                keyboardView.setKeyboard(keyboard_shifted);
-                caps = true;
-            } else {
-                keyboardView.setKeyboard(keyboard_normal);
-                caps = false;
-            }
+            caps = !caps;
+            keyboardView.setShifted(caps);
             return;
         }
 
@@ -104,8 +97,9 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                 ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, primaryCode));
                 return;
             case -100:
-                keyboardView.setKeyboard(keyboard_symbols);
                 caps = false;
+                keyboardView.setShifted(caps);
+                keyboardView.setKeyboard(keyboard_symbols);
                 return;
             case -101:
                 keyboardView.setKeyboard(keyboard_normal);
@@ -139,42 +133,6 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
             case -201:
                 ic.commitText("False", 1);
                 return;
-            case -202:
-                ic.commitText(")", 1);
-                return;
-            case -203:
-                ic.commitText("]", 1);
-                return;
-            case -204:
-                ic.commitText("}", 1);
-                return;
-            case -205:
-                ic.commitText(">", 1);
-                return;
-            case -206:
-                ic.commitText(":", 1);
-                return;
-            case -207:
-                ic.commitText("\\", 1);
-                return;
-            case -208:
-                ic.commitText("#", 1);
-                return;
-            case -209:
-                ic.commitText("!", 1);
-                return;
-            case -210:
-                ic.commitText("_", 1);
-                return;
-            case -211:
-                ic.commitText("@", 1);
-                return;
-            case -212:
-                ic.commitText("\"", 1);
-                return;
-            case -213:
-                ic.commitText("%", 1);
-                return;
             default:
                 char code = (char) primaryCode;
                 // handle CapsLock (Original characters are Capitalized)
@@ -187,14 +145,14 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         // Caps is used only for 1 letter
         // we might move it into switch-default
         if(caps) {
-            keyboardView.setKeyboard(keyboard_normal);
             caps = false;
+            keyboardView.setShifted(caps);
         }
     }
 
     @Override
     public void onPress(int primaryCode) {
-        vibrate();
+        vibrate_on_tap();
     }
 
     @Override
