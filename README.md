@@ -7,16 +7,18 @@ PY Board is a custom android keyboard for programming in Python
 
 ## Main features ##
 * Easy access to symbols used in Python
-* Use Caps to access second set of special symbols as well as capital letters
 * Navigation arrows
+* Access second set of symbols by holding keys
+* Snippets for __True__ and __False__, simply hold T or F 
+* Code snippets
 
 ## ToDo ##
-* Add functionality for code snipets in Symbols
-* On hold key -- access second set of special symbols
-* On hold key -- shortcuts, for example
-  *  hold 'F' → __False__
-  *  hold 'T' → __True__
-
+* Autocomplete options
+* More code snippets and symbols for symbols panel
+* Add customatization through linked app
+  * Light and dark themes
+  * Custom code snippets
+  * Show/Hide navigation arrows
 
 ## Previous versions ##
 
