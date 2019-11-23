@@ -1,6 +1,7 @@
 package com.rnglol.custom_keyboard;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.os.Build;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.InputConnection;
 import android.os.Vibrator;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,14 +47,41 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         String before = ic.getTextBeforeCursor(15,0).toString();
         String after = ic.getTextAfterCursor(15,0).toString();
         ((TextView)candidates.getChildAt(0)).setText(before + "☺" + after);
+        ((TextView)candidates.getChildAt(1)).setText(before + "☺" + after);
+        ((TextView)candidates.getChildAt(2)).setText(before + "☺" + after);
     }
 
     @Override
     public View onCreateCandidatesView () {
         candidates = new LinearLayout(getApplicationContext());
-        candidates.setBackgroundColor('@');
-        TextView text1 = new TextView(getApplicationContext());
-        candidates.addView(text1,0);
+        candidates.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Button btn = (Button) view;
+                InputConnection ic = getCurrentInputConnection();
+                ic.commitText(btn.getText(),1);
+                updCandidates();
+            }
+        };
+
+        int cand_text_size = 20;
+        Button cand1 = new Button(getApplicationContext());
+        Button cand2 = new Button(getApplicationContext());
+        Button cand3 = new Button(getApplicationContext());
+        cand1.setOnClickListener(listener);
+        cand2.setOnClickListener(listener);
+        cand3.setOnClickListener(listener);
+        cand1.setTextSize(cand_text_size);
+        cand2.setTextSize(cand_text_size);
+        cand3.setTextSize(cand_text_size);
+        int key_height = (int) getResources().getDimension(R.dimen.CandidatesHeight);
+        LinearLayout.LayoutParams par = new LinearLayout.LayoutParams(0,key_height,1);
+        candidates.addView(cand1,0,par);
+        candidates.addView(cand2,1,par);
+        candidates.addView(cand3,2,par);
         updCandidates();
         setCandidatesViewShown(true);
         return candidates;

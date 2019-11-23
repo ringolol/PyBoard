@@ -3,9 +3,9 @@
     android:keyWidth="8.33%p"
     android:horizontalGap="0dp"
     android:verticalGap="0dp"
-    android:keyHeight="50dp">
+    android:keyHeight="@dimen/KeyHeight">
 
-    <Row android:keyHeight="35dp">
+    <Row android:keyHeight="@dimen/ArrowsHeight">
         <Key android:codes="19" android:keyLabel="\u25b2"
             android:keyEdgeFlags="left" android:keyWidth="25%p" android:isRepeatable="true"/>
         <Key android:codes="20" android:keyLabel="\u25bc"
