@@ -9,14 +9,21 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.InputConnection;
 import android.os.Vibrator;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import static android.view.inputmethod.InputConnection.CURSOR_UPDATE_IMMEDIATE;
 
 public class MyInputMethodService extends InputMethodService implements PyBoardView.OnKeyboardActionListener {
     private PyBoardView keyboardView;
     private Keyboard keyboard_normal, keyboard_symbols;
     private boolean caps = false;
     Vibrator vibra;
+    LinearLayout candidates;
 
     @Override
     public View onCreateInputView() {
@@ -29,8 +36,35 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         keyboardView.setKeyboard(keyboard_normal);
         keyboardView.setOnKeyboardActionListener(this);
         vibra = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         return keyboardView;
     }
+
+    void updCandidates() {
+        InputConnection ic = getCurrentInputConnection();
+        String before = ic.getTextBeforeCursor(15,0).toString();
+        String after = ic.getTextAfterCursor(15,0).toString();
+        ((TextView)candidates.getChildAt(0)).setText(before + "☺" + after);
+    }
+
+    @Override
+    public View onCreateCandidatesView () {
+        candidates = new LinearLayout(getApplicationContext());
+        candidates.setBackgroundColor('@');
+        TextView text1 = new TextView(getApplicationContext());
+        candidates.addView(text1,0);
+        updCandidates();
+        setCandidatesViewShown(true);
+        return candidates;
+    }
+
+    @Override
+    public void onUpdateCursorAnchorInfo(CursorAnchorInfo info) {
+        Log.println(Log.INFO,"INFO", "CursorUpdate");
+        super.onUpdateCursorAnchorInfo(info);
+        updCandidates();
+    }
+
 
     void vibrate_on_tap(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -68,15 +102,14 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     public void onKey(int primaryCode, int[] keyCodes) {
         Log.println(Log.INFO,"INFO", "onKey");
         InputConnection ic = getCurrentInputConnection();
+
         if (ic == null) return;
 
-        if(primaryCode == Keyboard.KEYCODE_SHIFT) {
-            caps = !caps;
-            keyboardView.setShifted(caps);
-            return;
-        }
-
         switch (primaryCode) {
+            case Keyboard.KEYCODE_SHIFT:
+                caps = !caps;
+                keyboardView.setShifted(caps);
+                break;
             case Keyboard.KEYCODE_DELETE:
                 CharSequence selectedText = ic.getSelectedText(0);
                 if (TextUtils.isEmpty(selectedText)) {
@@ -86,7 +119,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                     // delete the selection
                     ic.commitText("", 1);
                 }
-                return;
+                break;
             case Keyboard.KEYCODE_DONE:
                 ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
                 break;
@@ -95,44 +128,45 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
             case KeyEvent.KEYCODE_DPAD_LEFT:
             case KeyEvent.KEYCODE_DPAD_UP:
                 ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, primaryCode));
-                return;
+                ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, primaryCode));
+                break;
             case -100:
                 caps = false;
                 keyboardView.setShifted(caps);
                 keyboardView.setKeyboard(keyboard_symbols);
-                return;
+                break;
             case -101:
                 keyboardView.setKeyboard(keyboard_normal);
-                return;
+                break;
             case -102:
                 // smiley face shows where the pointer will be
                 CommitSnippet(ic, " if ☺ else None");
-                return;
+                break;
             case -103:
                 CommitSnippet(ic, "for x in ☺:");
-                return;
+                break;
             case -104:
                 CommitSnippet(ic, "for i in range(☺):");
-                return;
+                break;
             case -105:
                 CommitSnippet(ic, "for i, x in enumerate(☺):");
-                return;
+                break;
             case -106:
                 CommitSnippet(ic, "def ☺(*args,**kwargs):");
-                return;
+                break;
             case -107:
                 CommitSnippet(ic, "#PY Board easy input\ndef gen_in(n):\n\tfor _ in range(n):\n" +
                         "\t\tyield int(input())\n\na, b, c = gen_in(3)☺");
-                return;
+                break;
             case -108:
                 CommitSnippet(ic, "print(☺)");
-                return;
+                break;
             case -200:
                 ic.commitText("True", 1);
-                return;
+                break;
             case -201:
                 ic.commitText("False", 1);
-                return;
+                break;
             default:
                 char code = (char) primaryCode;
                 // handle CapsLock (Original characters are Capitalized)
@@ -140,13 +174,14 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                     code = Character.toLowerCase(code);
 
                 ic.commitText(String.valueOf(code), 1);
+                // Caps is used only for 1 letter
+                if(caps) {
+                    caps = false;
+                    keyboardView.setShifted(caps);
+                }
         }
-
-        // Caps is used only for 1 letter
-        // we might move it into switch-default
-        if(caps) {
-            caps = false;
-            keyboardView.setShifted(caps);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ic.requestCursorUpdates(CURSOR_UPDATE_IMMEDIATE);
         }
     }
 
