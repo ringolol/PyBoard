@@ -28,20 +28,19 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     LinearLayout candidates;
 
     public static final int TAKECHAR_NUM = 15;
-    public static final int CAND_TEXT_SIZE = 17;
+    public static final int CAND_TEXT_SIZE = 15;
     public static final int VIB_DURATION = 45;
+    public static final int CANDIDATES_NUM = 3;
     public static final String[] dictionary = new String[]{
             // Comparisons
             "<", "<=", ">", ">=", "==", "!=", "is", "is not", "in", "not", "==", ":=",
-            // Types
-            "int", "float", "complex", "list", "tuple", "range", "str", "set", "frozenset", "dict",
-            // Additional types
-            "Fraction", "Decimal", "bytes", "bytearray", "memoryview",
             // Keywords and constants
             "False", "None", "True", "and", "as", "assert", "async", "await", "break", "class",
             "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global",
             "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return",
             "try", "while", "with", "yield", "NotImplemented", "Ellipsis", "__debug__",
+            // Types
+            "int", "float", "complex", "list", "tuple", "range", "str", "set", "frozenset", "dict",
             // Built-in functions
             "abs()", "all()", "any()", "ascii()", "bin()", "bool()", "breakpoint()",
             "bytearray()", "bytes()", "callable()", "chr()", "classmethod()", "compile()", "complex()",
@@ -52,7 +51,9 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
             "object()", "oct()", "open()", "ord()", "pow()", "print()", "property()", "range()",
             "repr()", "reversed()", "round()", "set()", "setattr()", "slice()", "sorted()",
             "staticmethod()", "str()", "sum()", "super()", "tuple()", "type()", "vars()", "zip()",
-            "__import__()"};
+            "__import__()",
+            // Additional types
+            "Fraction", "Decimal", "bytes", "bytearray", "memoryview"};
 
     //init IME
     @Override
@@ -78,7 +79,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
             inx = from_start?i:str.length()-1-i;
             c = str.charAt(inx);
 
-            if(!Character.isLetter(c) && c != '_' && !Character.isDigit(c)) {
+            if(!Character.isLetterOrDigit(c) && c != '_' && c != '(' && c != ')') {
                 return inx;
             }
         }
@@ -104,14 +105,16 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         Vector<String> possible_cand = new Vector<>();
         if(original.length() > 0) {
             for (String str : dictionary) {
-                if (str.length() >= original.length() && str.substring(0, original.length()).equalsIgnoreCase(original)) {
+                if (str.length() >= original.length() && str.substring(0, original.length()).equalsIgnoreCase(original))
                     possible_cand.add(str);
-                }
+
+                if(possible_cand.size() == CANDIDATES_NUM)
+                    break;
             }
         }
 
         String cand;
-        for(int i=0;i<3;i++) {
+        for(int i=0;i<CANDIDATES_NUM;i++) {
             if(possible_cand.size() > i) {
                 cand = possible_cand.get(i);
             } else {
@@ -131,36 +134,37 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
             public void onClick(View view)
             {
                 Button btn = (Button) view;
+
+                if(btn.getText() == "")
+                    return;
+
                 InputConnection ic = getCurrentInputConnection();
                 String before = ic.getTextBeforeCursor(TAKECHAR_NUM,0).toString();
                 String after = ic.getTextAfterCursor(TAKECHAR_NUM,0).toString();
                 int left_sep = findSeparator(before,false);
                 int right_sep = findSeparator(after,true);
-                if(left_sep == -1)
-                    left_sep = 0;
-                if(right_sep == -1)
-                    right_sep = TAKECHAR_NUM;
 
-                ic.deleteSurroundingText(left_sep, right_sep);
+                //todo delete first condition
+                if(left_sep == -1)
+                    left_sep = -1;
+                if(right_sep == -1)
+                    right_sep = after.length();
+
+                ic.deleteSurroundingText(before.length()-left_sep-1, right_sep);
                 ic.commitText(btn.getText(),1);
                 updCandidates();
             }
         };
 
-        Button cand1 = new Button(getApplicationContext());
-        Button cand2 = new Button(getApplicationContext());
-        Button cand3 = new Button(getApplicationContext());
-        cand1.setOnClickListener(listener);
-        cand2.setOnClickListener(listener);
-        cand3.setOnClickListener(listener);
-        cand1.setTextSize(CAND_TEXT_SIZE);
-        cand2.setTextSize(CAND_TEXT_SIZE);
-        cand3.setTextSize(CAND_TEXT_SIZE);
         int key_height = (int) getResources().getDimension(R.dimen.CandidatesHeight);
         LinearLayout.LayoutParams par = new LinearLayout.LayoutParams(0,key_height,1);
-        candidates.addView(cand1,0,par);
-        candidates.addView(cand2,1,par);
-        candidates.addView(cand3,2,par);
+        for(int i = 0; i<CANDIDATES_NUM; i++) {
+            Button btn = new Button(getApplicationContext());
+            btn.setOnClickListener(listener);
+            btn.setTextSize(CAND_TEXT_SIZE);
+            btn.setTransformationMethod(null);
+            candidates.addView(btn,i,par);
+        }
         updCandidates();
         setCandidatesViewShown(true);
         return candidates;
@@ -199,9 +203,11 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         }
         ic.commitText(buff, 1);
         // move pointer
-        for(int j=0; j<i-pos; j++)
+        for(int j=0; j<i-pos; j++) {
             ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT));
-        // get back to normal keyboard
+            ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_LEFT));
+        }
+        // get back to the normal keyboard
         keyboardView.setKeyboard(keyboard_normal);
     }
 
@@ -262,7 +268,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                 CommitSnippet(ic, "def ☺(*args,**kwargs):");
                 break;
             case -107:
-                CommitSnippet(ic, "#PY Board easy input\ndef gen_in(n):\n\tfor _ in range(n):\n" +
+                CommitSnippet(ic, "#PYB Stepik easy input\ndef gen_in(n):\n\tfor _ in range(n):\n" +
                         "\t\tyield int(input())\n\na, b, c = gen_in(3)☺");
                 break;
             case -108:
