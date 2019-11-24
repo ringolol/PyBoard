@@ -1,7 +1,6 @@
 package com.rnglol.custom_keyboard;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.os.Build;
@@ -10,13 +9,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.InputConnection;
 import android.os.Vibrator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import java.lang.*;
 
 import static android.view.inputmethod.InputConnection.CURSOR_UPDATE_IMMEDIATE;
 
@@ -27,6 +26,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     Vibrator vibra;
     LinearLayout candidates;
 
+    //init IME
     @Override
     public View onCreateInputView() {
         keyboardView = (PyBoardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
@@ -42,13 +42,39 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         return keyboardView;
     }
 
+    int findSeparator(String str, boolean from_start) {
+        char c;
+        int inx;
+        for(int i=0;i < str.length(); i++)
+        {
+            inx = from_start?i:str.length()-1-i;
+            c = str.charAt(inx);
+
+            if(!Character.isLetter(c) && c != '_' && !Character.isDigit(c)) {
+                return inx;
+            }
+        }
+        return -1;
+    }
+
     void updCandidates() {
         InputConnection ic = getCurrentInputConnection();
         String before = ic.getTextBeforeCursor(15,0).toString();
         String after = ic.getTextAfterCursor(15,0).toString();
-        ((TextView)candidates.getChildAt(0)).setText(before + "☺" + after);
-        ((TextView)candidates.getChildAt(1)).setText(before + "☺" + after);
-        ((TextView)candidates.getChildAt(2)).setText(before + "☺" + after);
+        int left_sep = findSeparator(before,false);
+        int right_sep = findSeparator(after,true);
+
+        String deb = String.format("updCandidates: left -- %d    right -- %d", left_sep, right_sep);
+        Log.println(Log.INFO,"INFO", deb);
+        if(left_sep != -1)
+            before = before.substring(left_sep+1);
+
+        if(right_sep != -1)
+            after = after.substring(0,right_sep);
+
+        ((TextView)candidates.getChildAt(0)).setText(before + after);
+        ((TextView)candidates.getChildAt(1)).setText(before + after + "X");
+        ((TextView)candidates.getChildAt(2)).setText(before + after + "Y");
     }
 
     @Override
@@ -89,7 +115,6 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
 
     @Override
     public void onUpdateCursorAnchorInfo(CursorAnchorInfo info) {
-        Log.println(Log.INFO,"INFO", "CursorUpdate");
         super.onUpdateCursorAnchorInfo(info);
         updCandidates();
     }
