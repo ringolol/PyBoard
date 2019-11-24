@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.lang.*;
+import java.util.Vector;
 
 import static android.view.inputmethod.InputConnection.CURSOR_UPDATE_IMMEDIATE;
 
@@ -25,6 +26,33 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     private boolean caps = false;
     Vibrator vibra;
     LinearLayout candidates;
+
+    public static final int TAKECHAR_NUM = 15;
+    public static final int CAND_TEXT_SIZE = 17;
+    public static final int VIB_DURATION = 45;
+    public static final String[] dictionary = new String[]{
+            // Comparisons
+            "<", "<=", ">", ">=", "==", "!=", "is", "is not", "in", "not", "==", ":=",
+            // Types
+            "int", "float", "complex", "list", "tuple", "range", "str", "set", "frozenset", "dict",
+            // Additional types
+            "Fraction", "Decimal", "bytes", "bytearray", "memoryview",
+            // Keywords and constants
+            "False", "None", "True", "and", "as", "assert", "async", "await", "break", "class",
+            "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global",
+            "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return",
+            "try", "while", "with", "yield", "NotImplemented", "Ellipsis", "__debug__",
+            // Built-in functions
+            "abs()", "all()", "any()", "ascii()", "bin()", "bool()", "breakpoint()",
+            "bytearray()", "bytes()", "callable()", "chr()", "classmethod()", "compile()", "complex()",
+            "delatrre()", "dict()", "dir()", "divmod()", "enumerate()", "eval()", "exec()", "filter()",
+            "float()", "format()", "frozenset()", "getattr()", "globals()", "hassattr()", "hash()",
+            "help()", "hex()", "id()", "input()", "int()", "isinstance()", "issubclass()", "iter()",
+            "len()", "list()", "locals()", "map()", "max()", "memoryview()", "min()", "next()",
+            "object()", "oct()", "open()", "ord()", "pow()", "print()", "property()", "range()",
+            "repr()", "reversed()", "round()", "set()", "setattr()", "slice()", "sorted()",
+            "staticmethod()", "str()", "sum()", "super()", "tuple()", "type()", "vars()", "zip()",
+            "__import__()"};
 
     //init IME
     @Override
@@ -58,23 +86,39 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     }
 
     void updCandidates() {
+        Log.println(Log.INFO,"INFO", "updCandidates");
         InputConnection ic = getCurrentInputConnection();
-        String before = ic.getTextBeforeCursor(15,0).toString();
-        String after = ic.getTextAfterCursor(15,0).toString();
+        String before = ic.getTextBeforeCursor(TAKECHAR_NUM,0).toString();
+        String after = ic.getTextAfterCursor(TAKECHAR_NUM,0).toString();
         int left_sep = findSeparator(before,false);
         int right_sep = findSeparator(after,true);
 
-        String deb = String.format("updCandidates: left -- %d    right -- %d", left_sep, right_sep);
-        Log.println(Log.INFO,"INFO", deb);
         if(left_sep != -1)
             before = before.substring(left_sep+1);
 
         if(right_sep != -1)
             after = after.substring(0,right_sep);
 
-        ((TextView)candidates.getChildAt(0)).setText(before + after);
-        ((TextView)candidates.getChildAt(1)).setText(before + after + "X");
-        ((TextView)candidates.getChildAt(2)).setText(before + after + "Y");
+        String original = before + after;
+
+        Vector<String> possible_cand = new Vector<>();
+        if(original.length() > 0) {
+            for (String str : dictionary) {
+                if (str.length() >= original.length() && str.substring(0, original.length()).equalsIgnoreCase(original)) {
+                    possible_cand.add(str);
+                }
+            }
+        }
+
+        String cand;
+        for(int i=0;i<3;i++) {
+            if(possible_cand.size() > i) {
+                cand = possible_cand.get(i);
+            } else {
+                cand = "";
+            }
+            ((TextView)candidates.getChildAt(i)).setText(cand);
+        }
     }
 
     @Override
@@ -88,21 +132,30 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
             {
                 Button btn = (Button) view;
                 InputConnection ic = getCurrentInputConnection();
+                String before = ic.getTextBeforeCursor(TAKECHAR_NUM,0).toString();
+                String after = ic.getTextAfterCursor(TAKECHAR_NUM,0).toString();
+                int left_sep = findSeparator(before,false);
+                int right_sep = findSeparator(after,true);
+                if(left_sep == -1)
+                    left_sep = 0;
+                if(right_sep == -1)
+                    right_sep = TAKECHAR_NUM;
+
+                ic.deleteSurroundingText(left_sep, right_sep);
                 ic.commitText(btn.getText(),1);
                 updCandidates();
             }
         };
 
-        int cand_text_size = 20;
         Button cand1 = new Button(getApplicationContext());
         Button cand2 = new Button(getApplicationContext());
         Button cand3 = new Button(getApplicationContext());
         cand1.setOnClickListener(listener);
         cand2.setOnClickListener(listener);
         cand3.setOnClickListener(listener);
-        cand1.setTextSize(cand_text_size);
-        cand2.setTextSize(cand_text_size);
-        cand3.setTextSize(cand_text_size);
+        cand1.setTextSize(CAND_TEXT_SIZE);
+        cand2.setTextSize(CAND_TEXT_SIZE);
+        cand3.setTextSize(CAND_TEXT_SIZE);
         int key_height = (int) getResources().getDimension(R.dimen.CandidatesHeight);
         LinearLayout.LayoutParams par = new LinearLayout.LayoutParams(0,key_height,1);
         candidates.addView(cand1,0,par);
@@ -122,10 +175,10 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
 
     void vibrate_on_tap(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibra.vibrate(VibrationEffect.createOneShot(45, VibrationEffect.DEFAULT_AMPLITUDE));
+            vibra.vibrate(VibrationEffect.createOneShot(VIB_DURATION, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
             //deprecated in API 26
-            vibra.vibrate(45);
+            vibra.vibrate(VIB_DURATION);
         }
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="KeyHeight">50dp</dimen>
-    <dimen name="CandidatesHeight">50dp</dimen>
+    <dimen name="CandidatesHeight">40dp</dimen>
     <dimen name="ArrowsHeight">35dp</dimen>
 </resources>
