@@ -18,6 +18,7 @@ public class PyBoardView extends KeyboardView {
     public static final int SuperTextSize = 40;
     Paint super_paint;
 
+    // init paint for superscript text
     void CreatePaint()
     {
         super_paint = new Paint();
@@ -36,6 +37,7 @@ public class PyBoardView extends KeyboardView {
         CreatePaint();
     }
 
+    // get superscript character by original character label
     int toSecondSet(int c) {
         switch (c)
         {
@@ -71,33 +73,41 @@ public class PyBoardView extends KeyboardView {
         return 0;
     }
 
+    // on long press print superscript text
     @Override
     public boolean onLongPress(Keyboard.Key k) {
-        //String str = String.format("OnLongPress: Key -- %s == %d", (char)k.codes[0],k.codes[0]);
-        //Log.println(Log.INFO,"INFO", str);
+        Log.println(Log.INFO,"INFO", "onLongPress");
 
+        // get superscript character by original character label
         int ch = toSecondSet(k.codes[0]);
+
         if(ch != 0)
         {
+            // call onKey method with superscript character
             getOnKeyboardActionListener().onKey(ch, null);
             return true;
         }
 
+        // call super handler
         return super.onLongPress(k);
     }
 
+    // engineerically crafted method for drawing superscript text
     void DrawSuperText(String str, Canvas canvas, Keyboard.Key key) {
+        // measure superscript text width
         float str_width = super_paint.measureText(str);
         canvas.drawText(str, key.x + key.width - str_width / 2 - 10, key.y + SuperTextSize + 5, super_paint);
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-
+        // call super method
         super.onDraw(canvas);
 
+        // draw superscripts
         List <Keyboard.Key> keys = getKeyboard().getKeys();
         for(Keyboard.Key key: keys) {
+            // todo it might be useless check
             if (key.label != null) {
                 String key_label = key.label.toString().toUpperCase();
                 if(key_label.length() == 1) {

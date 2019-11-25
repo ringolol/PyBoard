@@ -21,18 +21,29 @@ import java.util.Vector;
 import static android.view.inputmethod.InputConnection.CURSOR_UPDATE_IMMEDIATE;
 
 public class MyInputMethodService extends InputMethodService implements PyBoardView.OnKeyboardActionListener {
+    // it is the keyboard listener
     private PyBoardView keyboardView;
+    // these are two tabs of PYB
+    // normal -- regular keyboard with a few features good for python
+    // symbols -- for snippets and special symbols
     private Keyboard keyboard_normal, keyboard_symbols;
-    private boolean caps = false;
+    // vibrator on touch
     Vibrator vibra;
+    // layout with three buttonts, each button represents a possible command user might use
     LinearLayout candidates;
 
-    public static final int TAKECHAR_NUM = 15;
-    public static final int CAND_TEXT_SIZE = 15;
-    public static final int VIB_DURATION = 45;
-    public static final int CANDIDATES_NUM = 3;
-    public static final String[] dictionary = new String[]{
+    // num of chars taken on each side to find candidates (should be greater than the longest candidate from the dictionary)
+    private static final int TAKECHAR_NUM = 15;
+    // text size for candidates buttons
+    private static final int CAND_TEXT_SIZE = 15;
+    // duration of vibration
+    private static final int VIB_DURATION = 45;
+    // number of candidates to draw and find
+    private static final int CANDIDATES_NUM = 3;
+    // dictionary with possible candidates
+    private static final String[] dictionary = new String[]{
             // Comparisons
+            // todo <, =, >, ! cannot be seen by findSeparator method
             "<", "<=", ">", ">=", "==", "!=", "is", "is not", "in", "not", "==", ":=",
             // Keywords and constants
             "False", "None", "True", "and", "as", "assert", "async", "await", "break", "class",
@@ -55,22 +66,39 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
             // Additional types
             "Fraction", "Decimal", "bytes", "bytearray", "memoryview"};
 
-    //init IME
+    // todo add dictionary for lines with dots, for example arr.sort()
+    // todo handle this: print() -> [print()][ ][ ], should be [ ][ ][ ]
+    // todo make candidates view prettier
+    // todo add spaces after some candidates
+    // todo move cursor into brackets after adding a function candidate
+
+    // init IME
     @Override
     public View onCreateInputView() {
+        Log.println(Log.INFO,"INFO", "onCreateInputView");
+        // create keyboardview from layout
         keyboardView = (PyBoardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
 
+        // create two keyboards
+        // normal -- regular keyboard with a few features good for python
+        // symbols -- for snipets and special symbols
         keyboard_normal = new Keyboard(this, R.xml.keyboard_normal);
-        keyboard_normal.setShifted(false);
         keyboard_symbols = new Keyboard(this, R.xml.symbols_normal);
+        // Our keyboard is filled with capitalized characters, so we unshift them;)
+        keyboard_normal.setShifted(false);
 
+        // set normal keyboard as default and make keyboardView the listener
         keyboardView.setKeyboard(keyboard_normal);
         keyboardView.setOnKeyboardActionListener(this);
+
+        // init vibrator on touch
         vibra = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         return keyboardView;
     }
 
+    // find position of first or last separating symbol which separates a string into words
+    // separating symbols -- ' ', '\n', '.', etc
     int findSeparator(String str, boolean from_start) {
         char c;
         int inx;
@@ -86,9 +114,12 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         return -1;
     }
 
+    // update candidates
     void updCandidates() {
         Log.println(Log.INFO,"INFO", "updCandidates");
         InputConnection ic = getCurrentInputConnection();
+
+        // find the selected word
         String before = ic.getTextBeforeCursor(TAKECHAR_NUM,0).toString();
         String after = ic.getTextAfterCursor(TAKECHAR_NUM,0).toString();
         int left_sep = findSeparator(before,false);
@@ -100,19 +131,24 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         if(right_sep != -1)
             after = after.substring(0,right_sep);
 
+        // original is the selected word
         String original = before + after;
 
+        // check dictionary on possible candidates
         Vector<String> possible_cand = new Vector<>();
         if(original.length() > 0) {
             for (String str : dictionary) {
+                // the str from dictionary is a candidate if it is longer or equal to the original string
+                // and it's starts with the same letters
                 if (str.length() >= original.length() && str.substring(0, original.length()).equalsIgnoreCase(original))
                     possible_cand.add(str);
-
+                // we've already found all candidates we need, stop the algorithm
                 if(possible_cand.size() == CANDIDATES_NUM)
                     break;
             }
         }
 
+        // fill candidates layout with the found candidates
         String cand;
         for(int i=0;i<CANDIDATES_NUM;i++) {
             if(possible_cand.size() > i) {
@@ -124,38 +160,46 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         }
     }
 
+    // todo comment this
     @Override
     public View onCreateCandidatesView () {
+        Log.println(Log.INFO,"INFO", "onCreateCandidatesView");
+        // create linear layout
         candidates = new LinearLayout(getApplicationContext());
         candidates.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
+        // create listener for buttons on the layout
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
                 Button btn = (Button) view;
 
+                // everything can be a candidate for an empty string, so do nothing if you get one
                 if(btn.getText() == "")
                     return;
 
+                // find left and right separate characters
                 InputConnection ic = getCurrentInputConnection();
                 String before = ic.getTextBeforeCursor(TAKECHAR_NUM,0).toString();
                 String after = ic.getTextAfterCursor(TAKECHAR_NUM,0).toString();
                 int left_sep = findSeparator(before,false);
                 int right_sep = findSeparator(after,true);
-
-                //todo delete first condition
-                if(left_sep == -1)
-                    left_sep = -1;
+                // if we cant find the right separator, use the whole right part
                 if(right_sep == -1)
                     right_sep = after.length();
 
+                // erase original str
                 ic.deleteSurroundingText(before.length()-left_sep-1, right_sep);
+                // add chosen candidate
                 ic.commitText(btn.getText(),1);
+
+                // upd candidates
                 updCandidates();
             }
         };
 
+        // create three buttons and add it to the layout
         int key_height = (int) getResources().getDimension(R.dimen.CandidatesHeight);
         LinearLayout.LayoutParams par = new LinearLayout.LayoutParams(0,key_height,1);
         for(int i = 0; i<CANDIDATES_NUM; i++) {
@@ -165,19 +209,26 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
             btn.setTransformationMethod(null);
             candidates.addView(btn,i,par);
         }
+        // update candidates
         updCandidates();
+        // show candidates
         setCandidatesViewShown(true);
+
+        // return candidates view
         return candidates;
     }
 
+    // if text cursor is moved, update candidates
     @Override
     public void onUpdateCursorAnchorInfo(CursorAnchorInfo info) {
+        Log.println(Log.INFO,"INFO", "cursor position update");
         super.onUpdateCursorAnchorInfo(info);
         updCandidates();
     }
 
-
+    // vibrate on tap
     void vibrate_on_tap(){
+        Log.println(Log.INFO,"INFO", "vibrate");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibra.vibrate(VibrationEffect.createOneShot(VIB_DURATION, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
@@ -186,12 +237,15 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         }
     }
 
+    // special commit for snippets, it also moves cursor to the area of user interest
     void CommitSnippet(InputConnection ic, String str)
     {
+        Log.println(Log.INFO,"INFO", "CommitSnippet");
         String buff = "";
         int pos = 0;
         int i = 0;
-        // find pointer position
+        // find position of the area of user interest (it is represented by a smiley face)
+        // todo it might be done through search
         for (char ch: str.toCharArray()) {
             if(ch == '☺') {
                 pos = i;
@@ -201,8 +255,9 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                 i++;
             }
         }
+        // commit text of the snippet
         ic.commitText(buff, 1);
-        // move pointer
+        // move cursor to the area of the interest
         for(int j=0; j<i-pos; j++) {
             ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT));
             ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_LEFT));
@@ -211,6 +266,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         keyboardView.setKeyboard(keyboard_normal);
     }
 
+    // softkeyboard's key press handler
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
         Log.println(Log.INFO,"INFO", "onKey");
@@ -218,18 +274,19 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
 
         if (ic == null) return;
 
+        // switch-case for possible keys
         switch (primaryCode) {
             case Keyboard.KEYCODE_SHIFT:
-                caps = !caps;
-                keyboardView.setShifted(caps);
+                // trigger shift
+                keyboardView.setShifted(!keyboardView.isShifted());
                 break;
             case Keyboard.KEYCODE_DELETE:
                 CharSequence selectedText = ic.getSelectedText(0);
                 if (TextUtils.isEmpty(selectedText)) {
-                    // no selection, so delete previous character
+                    // no selection, delete previous character
                     ic.deleteSurroundingText(1, 0);
                 } else {
-                    // delete the selection
+                    // delete the selected text
                     ic.commitText("", 1);
                 }
                 break;
@@ -243,16 +300,18 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                 ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, primaryCode));
                 ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, primaryCode));
                 break;
+            // shift
             case -100:
-                caps = false;
-                keyboardView.setShifted(caps);
+                keyboardView.setShifted(false);
                 keyboardView.setKeyboard(keyboard_symbols);
                 break;
+            // get back from symbols tab
             case -101:
                 keyboardView.setKeyboard(keyboard_normal);
                 break;
+            // snippets
+            // smiley face shows where the pointer will be
             case -102:
-                // smiley face shows where the pointer will be
                 CommitSnippet(ic, " if ☺ else None");
                 break;
             case -103:
@@ -268,30 +327,32 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
                 CommitSnippet(ic, "def ☺(*args,**kwargs):");
                 break;
             case -107:
+                // todo may i have copyright issues for doing this?
                 CommitSnippet(ic, "#PYB Stepik easy input\ndef gen_in(n):\n\tfor _ in range(n):\n" +
                         "\t\tyield int(input())\n\na, b, c = gen_in(3)☺");
                 break;
             case -108:
                 CommitSnippet(ic, "print(☺)");
                 break;
+            // fast access to characters from the normal keyboard
             case -200:
                 ic.commitText("True", 1);
                 break;
             case -201:
                 ic.commitText("False", 1);
                 break;
+            // regular characters
             default:
                 char code = (char) primaryCode;
-                // handle CapsLock (Original characters are Capitalized)
-                if(Character.isLetter(code) && !caps)
+                // handle CapsLock (original characters are Capitalized)
+                if(Character.isLetter(code) && !keyboardView.isShifted())
                     code = Character.toLowerCase(code);
 
+                // send character
                 ic.commitText(String.valueOf(code), 1);
+
                 // Caps is used only for 1 letter
-                if(caps) {
-                    caps = false;
-                    keyboardView.setShifted(caps);
-                }
+                keyboardView.setShifted(false);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ic.requestCursorUpdates(CURSOR_UPDATE_IMMEDIATE);
@@ -300,6 +361,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
 
     @Override
     public void onPress(int primaryCode) {
+        Log.println(Log.INFO,"INFO", "onPress");
         vibrate_on_tap();
     }
 
