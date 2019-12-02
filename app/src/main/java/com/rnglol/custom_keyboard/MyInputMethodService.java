@@ -43,8 +43,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     // dictionary with possible candidates
     private static final String[] dictionary = new String[]{
             // Comparisons
-            // todo <, =, >, ! cannot be seen by findSeparator method
-            "<", "<=", ">", ">=", "==", "!=", "is", "is not", "in", "not", "==", ":=",
+            "is", "is not", "in", "not",
             // Keywords and constants
             "False", "None", "True", "and", "as", "assert", "async", "await", "break", "class",
             "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global",
@@ -138,9 +137,10 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
         Vector<String> possible_cand = new Vector<>();
         if(original.length() > 0) {
             for (String str : dictionary) {
-                // the str from dictionary is a candidate if it is longer or equal to the original string
+                // the str from dictionary is a candidate if it is longer or equal to the original str
                 // and it's starts with the same letters
-                if (str.length() >= original.length() && str.substring(0, original.length()).equalsIgnoreCase(original))
+                if (str.length() >= original.length() &&
+                        str.substring(0, original.length()).equalsIgnoreCase(original))
                     possible_cand.add(str);
                 // we've already found all candidates we need, stop the algorithm
                 if(possible_cand.size() == CANDIDATES_NUM)
