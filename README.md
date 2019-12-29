@@ -3,7 +3,7 @@
 
 PY Board is a custom android keyboard for programming in Python
 
-...
+<img src="readme_res/PyBoard07.jpg" width="300"> <img src="readme_res/PyBoard07_Sym.jpg" width="300">
 
 ## Main features ##
 * Easy access to symbols used in Python
