@@ -2,6 +2,7 @@ package com.rnglol.custom_keyboard;
 
 import android.content.Context;
 import android.inputmethodservice.InputMethodService;
+
 import android.inputmethodservice.Keyboard;
 import android.os.Build;
 import android.os.VibrationEffect;
