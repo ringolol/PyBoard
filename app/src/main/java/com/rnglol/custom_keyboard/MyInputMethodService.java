@@ -22,6 +22,8 @@ import java.util.Vector;
 import static android.view.inputmethod.InputConnection.CURSOR_UPDATE_IMMEDIATE;
 
 public class MyInputMethodService extends InputMethodService implements PyBoardView.OnKeyboardActionListener {
+    private static final String TAG = "PyBoard";
+
     // it is the keyboard listener
     private PyBoardView keyboardView;
     // these are two tabs of PYB
@@ -75,7 +77,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     // init IME
     @Override
     public View onCreateInputView() {
-        Log.println(Log.INFO,"INFO", "onCreateInputView");
+        Log.d(TAG, "onCreateInputView");
         // create keyboardview from layout
         keyboardView = (PyBoardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
 
@@ -116,7 +118,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
 
     // update candidates
     void updCandidates() {
-        Log.println(Log.INFO,"INFO", "updCandidates");
+        Log.d(TAG, "updCandidates");
         InputConnection ic = getCurrentInputConnection();
 
         // find the selected word
@@ -164,7 +166,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     // todo comment this
     @Override
     public View onCreateCandidatesView () {
-        Log.println(Log.INFO,"INFO", "onCreateCandidatesView");
+        Log.d(TAG, "onCreateCandidatesView");
         // create linear layout
         candidates = new LinearLayout(getApplicationContext());
         candidates.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -220,16 +222,25 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     }
 
     // if text cursor is moved, update candidates
+    // todo it might be overshoot
     @Override
     public void onUpdateCursorAnchorInfo(CursorAnchorInfo info) {
-        Log.println(Log.INFO,"INFO", "cursor position update");
+        Log.d(TAG, "onUpdCursorInfo");
         super.onUpdateCursorAnchorInfo(info);
+        updCandidates();
+    }
+
+    // handle all cursor movements
+    @Override
+    public void onUpdateSelection(int oldSelStart, int oldSelEnd, int newSelStart, int newSelEnd, int candidatesStart, int candidatesEnd)  {
+        Log.d(TAG, "updSelection");
+        super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart, candidatesEnd);
         updCandidates();
     }
 
     // vibrate on tap
     void vibrate_on_tap(){
-        Log.println(Log.INFO,"INFO", "vibrate");
+        Log.d(TAG, "vibrate");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibra.vibrate(VibrationEffect.createOneShot(VIB_DURATION, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
@@ -241,7 +252,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     // special commit for snippets, it also moves cursor to the area of user interest
     void CommitSnippet(InputConnection ic, String str)
     {
-        Log.println(Log.INFO,"INFO", "CommitSnippet");
+        Log.d(TAG, "CommitSnippet");
         String buff = "";
         int pos = 0;
         int i = 0;
@@ -270,7 +281,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
     // softkeyboard's key press handler
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
-        Log.println(Log.INFO,"INFO", "onKey");
+        Log.d(TAG, "onKey");
         InputConnection ic = getCurrentInputConnection();
 
         if (ic == null) return;
@@ -362,7 +373,7 @@ public class MyInputMethodService extends InputMethodService implements PyBoardV
 
     @Override
     public void onPress(int primaryCode) {
-        Log.println(Log.INFO,"INFO", "onPress");
+        Log.d(TAG, "onPress");
         vibrate_on_tap();
     }
 
