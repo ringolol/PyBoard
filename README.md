@@ -5,6 +5,8 @@ PY Board is a custom android keyboard for programming in Python
 
 <img src="readme_res/PyBoard07.jpg" width="300"> <img src="readme_res/PyBoard07_Sym.jpg" width="300">
 
+<a href="https://github.com/ringolol/PyBoard/raw/master/apk/PYB_07.apk">DOWNLOAD APK</a>
+
 ## Main features ##
 * Easy access to symbols used in Python
 * Navigation arrows
