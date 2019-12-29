@@ -15,12 +15,18 @@ PY Board is a custom android keyboard for programming in Python
 * Snippets for __True__ and __False__, simply hold T or F 
 * Code snippets
 
+## How to install a new keyboard ##
+<a href="https://www.androidcentral.com/how-set-default-keyboard-your-android-phone">Quick guide</a>
+
 ## ToDo ##
 * More code snippets and symbols for symbols panel
 * Add customatization through linked app
   * Light and dark themes
   * Custom code snippets
   * Show/Hide navigation arrows
+  
+## Known problems ##
+* This app uses recently depricated classes Keyboard and KeyboardView
 
 ## Previous versions ##
 
