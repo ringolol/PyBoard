@@ -28,7 +28,7 @@ PY Board is a custom android keyboard for programming in Python
   
 ## Known issues ##
 * This app uses recently depricated classes Keyboard and KeyboardView
-* Code snippets might overlap app's build in snippets
+* Autocompletion bar might overlap app's build in advanced control bar
 
 ## Previous versions ##
 
